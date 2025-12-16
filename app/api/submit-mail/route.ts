@@ -31,7 +31,7 @@ interface QuoteFormData extends BaseFormData {
 type FormData = ContactFormData | SupportFormData | QuoteFormData;
 
 // Valid product types for quote form
-const VALID_PRODUCTS = ['ARCHITECT', 'LANDMARK', 'SPOTLIGHT', 'FUNDAMENTALS'];
+const VALID_PRODUCTS = ['ARCHITECT', 'LANDMARK', 'SPOTLIGHT', 'FUNDAMENTALS', 'Design Suite','CAD'];
 
 // Email validation helper
 function isValidEmail(email: string): boolean {
