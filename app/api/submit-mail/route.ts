@@ -159,7 +159,45 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// CORS helper function
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  // Allowed origins
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://caduae.com',
+    'https://www.caduae.com',
+  ];
+
+  // Check if the origin is allowed, or use * for development
+  const allowedOrigin = origin && allowedOrigins.includes(origin) 
+    ? origin 
+    : process.env.NODE_ENV === 'production' 
+      ? 'https://caduae.com' 
+      : '*';
+
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '86400', // 24 hours
+  };
+}
+
+// Handle OPTIONS request for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const headers = getCorsHeaders(origin);
+
+  return new NextResponse(null, {
+    status: 200,
+    headers,
+  });
+}
+
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   try {
     const body = await request.json();
 
@@ -171,7 +209,10 @@ export async function POST(request: NextRequest) {
           status: 'error',
           message: validation.error || 'Validation failed',
         },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: corsHeaders,
+        }
       );
     }
 
@@ -195,7 +236,10 @@ export async function POST(request: NextRequest) {
         status: 'success',
         message: 'Thank you! Your message has been sent successfully.',
       },
-      { status: 200 }
+      { 
+        status: 200,
+        headers: corsHeaders,
+      }
     );
   } catch (error) {
     console.error('Error sending email:', error);
@@ -205,7 +249,10 @@ export async function POST(request: NextRequest) {
         status: 'error',
         message: errorMessage,
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: corsHeaders,
+      }
     );
   }
 }
