@@ -166,6 +166,7 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
     'http://localhost:3000',
     'https://caduae.com',
     'https://www.caduae.com',
+    'https://monumental-ganache-234713.netlify.app',
   ];
 
   // Check if the origin is allowed, or use * for development
